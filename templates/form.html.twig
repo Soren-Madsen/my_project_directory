@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Person Form{% endblock %}
+
+{% block body %}
+    <h1>Person Form</h1>
+    {{ form_start(form) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.age) }}
+        {{ form_row(form.work) }}
+        <button class="btn btn-primary">Submit</button>
+    {{ form_end(form) }}
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Person Submitted{% endblock %}
+
+{% block body %}
+    <h1>Person Submitted</h1>
+    {% if submittedData %}
+        <ul>
+            <li>Name: {{ submittedData.name }}</li>
+            <li>Age: {{ submittedData.age }}</li>
+            <li>Work: {{ submittedData.work }}</li>
+        </ul>
+    {% else %}
+        <p>No data submitted.</p>
+    {% endif %}
+{% endblock %}
