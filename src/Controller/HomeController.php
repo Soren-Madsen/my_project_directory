@@ -45,7 +45,7 @@ public function personForm(Request $request): Response
             'age' => $person->getAge(),
             'work' => $person->getWork(),
         ]);
-        return $this->redirectToRoute('person_success');
+        return $this->redirectToRoute('person_data');
     }
 
     return $this->render('form.html.twig', [
@@ -53,13 +53,13 @@ public function personForm(Request $request): Response
     ]);
 }
 
-#[Route(path: '/person_success', name: 'person_success')]
+#[Route(path: '/person_data', name: 'person_data')]
 public function personSuccess(Request $request): Response
 {
     $session = $request->getSession();
     $submittedData = $session->get('submittedData');
 
-    return $this->render('person_success.html.twig', [
+    return $this->render('person_data.html.twig', [
         'submittedData' => $submittedData,
     ]);
 }
