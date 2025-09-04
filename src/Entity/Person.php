@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity;
 
 class Person
@@ -15,14 +16,6 @@ class Person
     {
         $this->name = $name;
     }
-    public function getAge(): int
-    {
-        return $this->age;
-    }
-    public function setAge(int $age): void
-    {
-        $this->age = $age;
-    }
     public function getWork(): string
     {
         return $this->work;
@@ -30,5 +23,15 @@ class Person
     public function setWork(string $work): void
     {
         $this->work = $work;
+    }
+    protected \DateTime $birthDate;
+
+    public function getBirthDate(): \DateTime
+    {
+        return $this->birthDate;
+    }
+    public function setBirthDate(\DateTime $birthDate): void
+    {
+        $this->birthDate = $birthDate;
     }
 }
