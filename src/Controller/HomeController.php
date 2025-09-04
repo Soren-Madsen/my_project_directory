@@ -9,15 +9,17 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends AbstractController{
 
-    #[Route('/')]
+    #[Route('/t')]
     public function index(): Response
     {
         return $this->render('index.html.twig', ["name" => "Sóren"]);
     }
 
-    #[Route('/my_project_directory')]
+    #[Route(path: '/test')]
     public function test(): Response
     {
         return new JsonResponse(["id" => 1234]);
     }
+
+
 }
