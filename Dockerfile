@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Instalación de Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+RUN docker-php-ext-install pdo pdo_mysql
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN a2enmod rewrite headers \

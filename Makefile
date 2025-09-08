@@ -7,3 +7,6 @@ stop:
 
 ssh-app:
 	docker exec -ti app bash
+
+build:
+	docker-compose build
