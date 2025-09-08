@@ -54,24 +54,30 @@ public function personForm(Request $request): Response
 
     $form->handleRequest($request);
 
-   if ($form->isSubmitted() && $form->isValid()) {
-    $birthDate = $person->getBirthDate();
-    $today = new \DateTime();
+ 
+    if ($form->isSubmitted() && $form->isValid()) {
+        $birthDate = $person->getBirthDate();
+        $today = new \DateTime();
+        $felicidades = '';
+        if ($birthDate && $birthDate->format('m-d') === $today->format('m-d')) {
+            $felicidades = 'Felicidades!!';
+            $this->addFlash('felicidades', $felicidades);
+        }
 
-    $age = $today->diff($birthDate)->y;
-    $session = $request->getSession();
-    $session->set('submittedData', [
-        'name' => $person->getName(),
-        'age' => $age,
-        'work' => $person->getWork(),
-        'birthDate' => $birthDate->format('Y-m-d'),
-        'acceptsCommercial' => $form->get('acceptsCommercial')->getData() ? 'Sí' : 'No',
-    ]);
-    return $this->redirectToRoute('person_data');
-}
+        $age = $today->diff($birthDate)->y;
+        $session = $request->getSession();
+        $session->set('submittedData', [
+            'name' => $person->getName(),
+            'age' => $age,
+            'work' => $person->getWork(),
+            'birthDate' => $birthDate->format('Y-m-d'),
+            'acceptsCommercial' => $form->get('acceptsCommercial')->getData() ? 'Sí' : 'No',
+        ]);
+        return $this->redirectToRoute('person_data');
+    }
 
     return $this->render('form.html.twig', [
-        'form' => $form->createView(),
+        'form' => $form->createView()
     ]);
 }
     #[Route(path: '/person_data', name: 'person_data')]

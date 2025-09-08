@@ -4,6 +4,9 @@
 
 {% block body %}
     <h1>Person Submitted</h1>
+    {% for msg in app.flashes('felicidades') %}
+        <div style="color: green; font-weight: bold;">{{ msg }}</div>
+    {% endfor %}
     {% if submittedData %}
         <ul>
             <li>Name: {{ submittedData.name }}</li>
