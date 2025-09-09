@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use App\Entity\Person;
+use Doctrine\ORM\EntityManagerInterface;
 
 class HomeController extends AbstractController
 {
@@ -23,71 +24,80 @@ class HomeController extends AbstractController
     }
 
 
-#[Route(path: '/person')]
-public function personForm(Request $request): Response
-{
-    $person = new Person();
+    #[Route(path: '/person')]
+    public function personForm(Request $request, EntityManagerInterface $em): Response
+    {
+        $person = new Person();
 
-    $form = $this->createFormBuilder($person)
-        ->add('name', TextType::class)
-        ->add('birthDate', DateType::class, [
-            'widget' => 'single_text',
-            'label' => 'Fecha de nacimiento'
-        ])
-        ->add('work', ChoiceType::class, [
-            'label' => 'Trabajo',
-            'choices' => [
-                'Desarrollador' => 'desarrollador',
-                'Diseñador' => 'diseñador',
-                'Profesor' => 'profesor',
-                'Otro' => 'otro'
-            ],
-            'placeholder' => 'Selecciona una opción'
-        ])
-        ->add('acceptsCommercial', CheckboxType::class, [
-            'label'    => 'Acepto las comunicaciones comerciales',
-            'required' => false,
-            'mapped'   => false,
-        ])
-        ->add('save', SubmitType::class, ['label' => 'Submit'])
-        ->getForm();
+        $form = $this->createFormBuilder($person)
+            ->add('name', TextType::class)
+            ->add('birthDate', DateType::class, [
+                'widget' => 'single_text',
+                'label' => 'Fecha de nacimiento'
+            ])
+            ->add('work', ChoiceType::class, [
+                'label' => 'Trabajo',
+                'choices' => [
+                    'Desarrollador' => 'desarrollador',
+                    'Diseñador' => 'diseñador',
+                    'Profesor' => 'profesor',
+                    'Otro' => 'otro'
+                ],
+                'placeholder' => 'Selecciona una opción'
+            ])
+            ->add('acceptsCommercial', CheckboxType::class, [
+                'label'    => 'Acepto las comunicaciones comerciales',
+                'required' => false
+            ])
+            ->add('save', SubmitType::class, ['label' => 'Submit'])
+            ->getForm();
 
-    $form->handleRequest($request);
+        $form->handleRequest($request);
 
- 
-    if ($form->isSubmitted() && $form->isValid()) {
-        $birthDate = $person->getBirthDate();
-        $today = new \DateTime();
-        $felicidades = '';
-        if ($birthDate && $birthDate->format('m-d') === $today->format('m-d')) {
-            $felicidades = 'Felicidades!!';
-            $this->addFlash('felicidades', $felicidades);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $birthDate = $person->getBirthDate();
+            $today = new \DateTime();
+
+          
+            $em->persist($person);
+            $em->flush();
+
+            
+            $request->getSession()->set('person_id', $person->getId());
+            $request->getSession()->set('acceptsCommercial', $form->get('acceptsCommercial')->getData() ? 'Sí' : 'No');
+
+            return $this->redirectToRoute('person_data');
         }
 
-        $age = $today->diff($birthDate)->y;
-        $session = $request->getSession();
-        $session->set('submittedData', [
-            'name' => $person->getName(),
-            'age' => $age,
-            'work' => $person->getWork(),
-            'birthDate' => $birthDate->format('Y-m-d'),
-            'acceptsCommercial' => $form->get('acceptsCommercial')->getData() ? 'Sí' : 'No',
+        return $this->render('form.html.twig', [
+            'form' => $form->createView()
         ]);
-        return $this->redirectToRoute('person_data');
     }
 
-    return $this->render('form.html.twig', [
-        'form' => $form->createView()
-    ]);
-}
     #[Route(path: '/person_data', name: 'person_data')]
-    public function personSuccess(Request $request): Response
+    public function personSuccess(Request $request, EntityManagerInterface $em): Response
     {
-        $session = $request->getSession();
-        $submittedData = $session->get('submittedData');
+        $personId = $request->getSession()->get('person_id');
+        $acceptsCommercial = $request->getSession()->get('acceptsCommercial');
+
+        $person = $em->getRepository(Person::class)->find($personId);
+
+        if (!$person) {
+            throw $this->createNotFoundException('Persona no encontrada');
+        }
+
+        $today = new \DateTime();
+        $birthDate = $person->getBirthDate();
+        $age = $today->diff($birthDate)->y;
 
         return $this->render('person_data.html.twig', [
-            'submittedData' => $submittedData,
+            'submittedData' => [
+                'name' => $person->getName(),
+                'age' => $age,
+                'work' => $person->getWork(),
+                'birthDate' => $birthDate->format('Y-m-d'),
+                'acceptsCommercial' => $acceptsCommercial,
+            ],
         ]);
     }
 }

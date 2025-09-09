@@ -18,9 +18,12 @@ class Person
 
     #[ORM\Column(length: 255)]
     protected string $work;
-    
+
     #[ORM\Column(type: 'datetime')]
     protected DateTime $birthDate;
+
+    #[ORM\Column(type: 'boolean')]
+    protected bool $acceptsCommercial = false;
 
     public function getId(): ?int
     {
@@ -54,4 +57,13 @@ class Person
     {
         $this->birthDate = $birthDate;
     }
+    public function getAcceptsCommercial(): bool
+    {
+        return $this->acceptsCommercial;
+    }
+    public function setAcceptsCommercial(bool $acceptsCommercial): void
+    {
+        $this->acceptsCommercial = $acceptsCommercial;
+    }
+
 }
