@@ -58,11 +58,11 @@ class HomeController extends AbstractController
             $birthDate = $person->getBirthDate();
             $today = new \DateTime();
 
-          
+
             $em->persist($person);
             $em->flush();
 
-            
+
             $request->getSession()->set('person_id', $person->getId());
             $request->getSession()->set('acceptsCommercial', $form->get('acceptsCommercial')->getData() ? 'Sí' : 'No');
 
@@ -71,6 +71,16 @@ class HomeController extends AbstractController
 
         return $this->render('form.html.twig', [
             'form' => $form->createView()
+        ]);
+    }
+
+    #[Route('/listado', name: 'person_list')]
+    public function personList(EntityManagerInterface $em): Response
+    {
+        $people = $em->getRepository(Person::class)->findAll();
+
+        return $this->render('person_list.html.twig', [
+            'people' => $people,
         ]);
     }
 

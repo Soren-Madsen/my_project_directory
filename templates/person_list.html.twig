@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Listado de Personas{% endblock %}
+
+{% block body %}
+    <h1>Listado de Personas</h1>
+    <ul>
+        {% for person in people %}
+            <li>
+                {{ person.name }} | {{ person.birthDate|date('Y-m-d') }} | {{ person.work }} | 
+                Acepta comunicaciones: {{ person.acceptsCommercial ? 'Sí' : 'No' }}
+            </li>
+        {% else %}
+            <li>No hay personas registradas.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
