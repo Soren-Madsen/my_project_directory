@@ -9,6 +9,7 @@
             <li>
                 {{ person.name }} | {{ person.birthDate|date('Y-m-d') }} | {{ person.work }} | 
                 Acepta comunicaciones: {{ person.acceptsCommercial ? 'Sí' : 'No' }}
+                <a href="{{ path('person_edit', {id: person.id}) }}">Editar</a>
             </li>
         {% else %}
             <li>No hay personas registradas.</li>
