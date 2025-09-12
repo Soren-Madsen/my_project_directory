@@ -22,7 +22,7 @@ class HomeController extends AbstractController
         return $this->render('index.html.twig', ["name" => "Sóren"]);
     }
 
-    #[Route(path: '/person', name: 'person')]
+    #[Route(path: '/person', name: 'person_form')]
     public function personForm(Request $request, EntityManagerInterface $em): Response
     {
         $person = new Person();
