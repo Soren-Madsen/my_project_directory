@@ -9,7 +9,12 @@
             <li>
                 {{ person.name }} | {{ person.birthDate|date('Y-m-d') }} | {{ person.work }} | 
                 Acepta comunicaciones: {{ person.acceptsCommercial ? 'Sí' : 'No' }}
-                <a href="{{ path('person_edit', {id: person.id}) }}">Editar</a>
+                <a href="{{ path('person_edit', {id: person.id}) }}">
+                    <button type="button">Editar</button>
+                </a>
+                <form action="{{ path('person_delete', {id: person.id}) }}" method="post" style="display:inline;">
+                    <button type="submit">Borrar</button>
+                </form>
             </li>
         {% else %}
             <li>No hay personas registradas.</li>

@@ -111,46 +111,56 @@ class HomeController extends AbstractController
         ]);
     }
     #[Route('/person/{id}/edit', name: 'person_edit')]
-public function editPerson(int $id, Request $request, EntityManagerInterface $em): Response
-{
-    $person = $em->getRepository(Person::class)->find($id);
+    public function editPerson(int $id, Request $request, EntityManagerInterface $em): Response
+    {
+        $person = $em->getRepository(Person::class)->find($id);
 
-    if (!$person) {
-        throw $this->createNotFoundException('Persona no encontrada');
+        if (!$person) {
+            throw $this->createNotFoundException('Persona no encontrada');
+        }
+
+        $form = $this->createFormBuilder($person)
+            ->add('name', TextType::class)
+            ->add('birthDate', DateType::class, [
+                'widget' => 'single_text',
+                'label' => 'Fecha de nacimiento'
+            ])
+            ->add('work', ChoiceType::class, [
+                'label' => 'Trabajo',
+                'choices' => [
+                    'Desarrollador' => 'desarrollador',
+                    'Diseñador' => 'diseñador',
+                    'Profesor' => 'profesor',
+                    'Otro' => 'otro'
+                ],
+                'placeholder' => 'Selecciona una opción'
+            ])
+            ->add('acceptsCommercial', CheckboxType::class, [
+                'label'    => 'Acepto las comunicaciones comerciales',
+                'required' => false,
+            ])
+            ->add('save', SubmitType::class, ['label' => 'Guardar'])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            return $this->redirectToRoute('person_list');
+        }
+
+        return $this->render('form.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
-
-    $form = $this->createFormBuilder($person)
-        ->add('name', TextType::class)
-        ->add('birthDate', DateType::class, [
-            'widget' => 'single_text',
-            'label' => 'Fecha de nacimiento'
-        ])
-        ->add('work', ChoiceType::class, [
-            'label' => 'Trabajo',
-            'choices' => [
-                'Desarrollador' => 'desarrollador',
-                'Diseñador' => 'diseñador',
-                'Profesor' => 'profesor',
-                'Otro' => 'otro'
-            ],
-            'placeholder' => 'Selecciona una opción'
-        ])
-        ->add('acceptsCommercial', CheckboxType::class, [
-            'label'    => 'Acepto las comunicaciones comerciales',
-            'required' => false,
-        ])
-        ->add('save', SubmitType::class, ['label' => 'Guardar'])
-        ->getForm();
-
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
-        $em->flush();
+    #[Route('/person/{id}/delete', name: 'person_delete', methods: ['POST'])]
+    public function deletePerson(int $id, EntityManagerInterface $em): Response
+    {
+        $person = $em->getRepository(Person::class)->find($id);
+        if ($person) {
+            $em->remove($person);
+            $em->flush();
+        }
         return $this->redirectToRoute('person_list');
     }
-
-    return $this->render('form.html.twig', [
-        'form' => $form->createView()
-    ]);
-}
 }

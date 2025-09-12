@@ -4,6 +4,11 @@
 
 {% block body %}
     <h1>Person Form</h1>
+    <div style="margin-bottom: 16px;">
+        <a href="{{ path('person_list') }}">
+            <button type="button">Ver listado</button>
+        </a>
+    </div>
     {{ form_start(form) }}
         {{ form_row(form.name) }}
         {{ form_row(form.birthDate) }}
