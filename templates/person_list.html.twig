@@ -4,6 +4,18 @@
 
 {% block body %}
     <h1>Listado de Personas</h1>
+
+    <div style="margin-bottom: 16px;">
+        <a href="{{ path('person') }}">
+            <button type="button">Nuevo registro</button>
+        </a>
+    </div>
+
+    <form method="get" action="{{ path('person_list') }}" style="margin-bottom: 16px;">
+        <input type="text" name="search" value="{{ search }}" placeholder="Buscar por nombre">
+        <button type="submit">Buscar</button>
+    </form>
+    
     <ul>
         {% for person in people %}
             <li>
@@ -13,11 +25,23 @@
                     <button type="button">Editar</button>
                 </a>
                 <form action="{{ path('person_delete', {id: person.id}) }}" method="post" style="display:inline;">
-                    <button type="submit">Borrar</button>
+                    <button type="submit" onclick="return confirm('¿Seguro que quieres borrar esta persona?');">Borrar</button>
                 </form>
             </li>
         {% else %}
             <li>No hay personas registradas.</li>
         {% endfor %}
     </ul>
+
+    {% if pages > 1 %}
+        <div style="margin-top:16px;">
+            {% for p in 1..pages %}
+                {% if p == page %}
+                    <span>[{{ p }}]</span>
+                {% else %}
+                    <a href="{{ path('person_list', {'page': p, 'search': search}) }}">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}
