@@ -6,12 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use App\Entity\Person;
+use App\PersonType;
 use Doctrine\ORM\EntityManagerInterface;
 
 class HomeController extends AbstractController
@@ -27,28 +23,7 @@ class HomeController extends AbstractController
     {
         $person = new Person();
 
-        $form = $this->createFormBuilder($person)
-            ->add('name', TextType::class)
-            ->add('birthDate', DateType::class, [
-                'widget' => 'single_text',
-                'label' => 'Fecha de nacimiento'
-            ])
-            ->add('work', ChoiceType::class, [
-                'label' => 'Trabajo',
-                'choices' => [
-                    'Desarrollador' => 'desarrollador',
-                    'Diseñador' => 'diseñador',
-                    'Profesor' => 'profesor',
-                    'Otro' => 'otro'
-                ],
-                'placeholder' => 'Selecciona una opción'
-            ])
-            ->add('acceptsCommercial', CheckboxType::class, [
-                'label'    => 'Acepto las comunicaciones comerciales',
-                'required' => false,
-            ])
-            ->add('save', SubmitType::class, ['label' => 'Guardar'])
-            ->getForm();
+        $form = $this->createForm(PersonType::class, $person);
 
         $form->handleRequest($request);
 
@@ -101,11 +76,10 @@ class HomeController extends AbstractController
         $page = max(1, (int)$request->query->get('page', 1));
         $limit = 5;
         $offset = ($page - 1) * $limit;
-
         $qb = $em->getRepository(Person::class)->createQueryBuilder('p');
         if ($search) {
-            $qb->where('p.name = :search')
-                ->setParameter('search', $search);
+            $qb->where('p.name LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
         }
         $qb->setFirstResult($offset)
             ->setMaxResults($limit);
@@ -114,8 +88,8 @@ class HomeController extends AbstractController
 
         $count = $em->getRepository(Person::class)->createQueryBuilder('p');
         if ($search) {
-            $count->where('p.name = :search')
-                ->setParameter('search', $search);
+            $count->where('p.name LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
         }
         $total = (int)$count->select('COUNT(p.id)')->getQuery()->getSingleScalarResult();
         $pages = (int)ceil($total / $limit);
@@ -137,28 +111,7 @@ class HomeController extends AbstractController
             throw $this->createNotFoundException('Persona no encontrada');
         }
 
-        $form = $this->createFormBuilder($person)
-            ->add('name', TextType::class)
-            ->add('birthDate', DateType::class, [
-                'widget' => 'single_text',
-                'label' => 'Fecha de nacimiento'
-            ])
-            ->add('work', ChoiceType::class, [
-                'label' => 'Trabajo',
-                'choices' => [
-                    'Desarrollador' => 'desarrollador',
-                    'Diseñador' => 'diseñador',
-                    'Profesor' => 'profesor',
-                    'Otro' => 'otro'
-                ],
-                'placeholder' => 'Selecciona una opción'
-            ])
-            ->add('acceptsCommercial', CheckboxType::class, [
-                'label'    => 'Acepto las comunicaciones comerciales',
-                'required' => false,
-            ])
-            ->add('save', SubmitType::class, ['label' => 'Guardar'])
-            ->getForm();
+        $form = $this->createForm(PersonType::class, $person);
 
         $form->handleRequest($request);
 
