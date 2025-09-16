@@ -10,7 +10,7 @@
             <li>Fecha de nacimiento: {{ submittedData.birthDate }}</li>
             <li>Edad: {{ submittedData.age }}</li>
             <li>Work: {{ submittedData.work }}</li>
-            <li>Acepta comunicaciones comerciales: {{ submittedData.aceptaComunicaciones }}</li>
+            <li>Acepta comunicaciones comerciales: {{ submittedData.aceptaComunicaciones ? 'Sí' : 'No' }}</li>            
             {% if submittedData.felicidades %}
                 <li style="color: green; font-weight: bold;">{{ submittedData.felicidades }}</li>
             {% endif %}

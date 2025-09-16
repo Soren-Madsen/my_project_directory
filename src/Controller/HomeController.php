@@ -60,10 +60,10 @@ class HomeController extends AbstractController
         return $this->render('person_data.html.twig', [
             'submittedData' => [
                 'name' => $person->getName(),
-                'age' => $age,
+                'age' => $age . ' años',
                 'work' => $person->getWork(),
                 'birthDate' => $birthDate->format('Y-m-d'),
-                'aceptaComunicaciones' => $person->getAcceptsCommercial() ? 'Sí' : 'No',
+                'aceptaComunicaciones' => $person->getAcceptsCommercial(),
                 'felicidades' => $felicidades,
             ],
         ]);
