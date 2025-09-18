@@ -5,29 +5,29 @@
 {% block body %}
 <form method="post">
     {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        <div class="alert alert-danger" style="margin-bottom: 16px;">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
 
     {% if app.user %}
-        <div class="mb-3">
+        <div class="mb-3" style="margin-bottom: 16px;">
             You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
         </div>
     {% endif %}
 
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputUsername">Username</label>
-    <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" autocomplete="username" required autofocus>
-    <label for="inputPassword">Password</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+    <h1 class="h3 mb-3 font-weight-normal" style="margin-bottom: 16px;">Sign in</h1>
+    <label for="inputUsername" style="margin-bottom: 8px;">Username</label>
+    <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" autocomplete="username" required autofocus style="margin-bottom: 16px;">
+    <label for="inputPassword" style="margin-bottom: 8px;">Password</label>
+    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required style="margin-bottom: 16px;">
     <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
 
-    <div class="checkbox mb-3">
+    <div class="checkbox mb-3" style="margin-bottom: 16px;">
         <label>
             <input type="checkbox" name="_remember_me"> Remember me
         </label>
     </div>
 
-    <button class="btn btn-lg btn-primary" type="submit">
+    <button class="btn btn-lg btn-primary" type="submit" style="margin-bottom: 16px;">
         Sign in
     </button>
 </form>

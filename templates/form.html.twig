@@ -4,9 +4,12 @@
 
 {% block body %}
     <h1>Person Form</h1>
-    <div style="margin-bottom: 16px;">
+    <div style="margin-bottom: 16px; display: flex; gap: 10px;">
         <a href="{{ path('person_list') }}">
             <button type="button">Ver listado</button>
+        </a>
+        <a href="{{ path('app_login') }}">
+            <button type="button">Ir a Login</button>
         </a>
     </div>
     {{ form_start(form) }}
@@ -14,6 +17,8 @@
         {{ form_row(form.birthDate) }}
         {{ form_row(form.work) }}
         {{ form_row(form.acceptsCommercial) }}
-        <button type="submit" class="btn btn-primary">Guardar</button>
+        <div style="margin-top: 24px;">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
     {{ form_end(form) }}
 {% endblock %}
