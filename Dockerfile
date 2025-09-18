@@ -11,6 +11,11 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 RUN docker-php-ext-install pdo pdo_mysql
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    libicu-dev \
+    && docker-php-ext-install pdo pdo_mysql intl
+
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN a2enmod rewrite headers \
     && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \

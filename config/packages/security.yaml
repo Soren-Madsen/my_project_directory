@@ -20,8 +20,7 @@ security:
             custom_authenticator: App\Security\AppAuthenticator
             logout:
                 path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
+                target: person_list
 
             remember_me:
                 secret: '%kernel.secret%'
@@ -51,4 +50,4 @@ when@test:
             # are not important, waste resources and increase test times. The following
             # reduces the work factor to the lowest possible values.
             Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
-              
+
