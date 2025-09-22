@@ -105,6 +105,67 @@ class HomeController extends AbstractController
         ]);
     }
 
+
+    #[Route('/{_locale}/api/listado', name: 'person_list_api', requirements: ['_locale' => 'en|es'], methods: ['GET'])]
+    public function personListApi(Request $request, EntityManagerInterface $em, string $_locale): Response
+    {
+        $search = $request->query->get('search', '');
+        $page = max(1, (int)$request->query->get('page', 1));
+        $limit = 5;
+        $offset = ($page - 1) * $limit;
+
+        $qb = $em->getRepository(Person::class)->createQueryBuilder('p');
+        if ($search) {
+            $qb->where('p.name LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+        $qb->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        $people = $qb->getQuery()->getResult();
+
+        $count = $em->getRepository(Person::class)->createQueryBuilder('p');
+        if ($search) {
+            $count->where('p.name LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+        $total = (int)$count->select('COUNT(p.id)')->getQuery()->getSingleScalarResult();
+        $pages = (int)ceil($total / $limit);
+
+        
+        $peopleData = [];
+        foreach ($people as $person) {
+            $today = new \DateTime();
+            $birthDate = $person->getBirthDate();
+            $age = $today->diff($birthDate)->y;
+
+            $peopleData[] = [
+                'id' => $person->getId(),
+                'name' => $person->getName(),
+                'work' => $person->getWork(),
+                'birthDate' => $birthDate->format('Y-m-d'),
+                'age' => $age,
+                'acceptsCommercial' => $person->getAcceptsCommercial(),
+                'isBirthday' => ($birthDate->format('m-d') === $today->format('m-d'))
+            ];
+        }
+
+        return $this->json([
+            'success' => true,
+            'data' => [
+                'people' => $peopleData,
+                'pagination' => [
+                    'page' => $page,
+                    'pages' => $pages,
+                    'total' => $total,
+                    'limit' => $limit
+                ],
+                'search' => $search,
+                'locale' => $_locale
+            ]
+        ]);
+    }
+
     #[Route('/{_locale}/listado', name: 'person_list_locale', requirements: ['_locale' => 'en|es'])]
     public function personListLocale(Request $request, EntityManagerInterface $em, string $_locale): Response
     {
