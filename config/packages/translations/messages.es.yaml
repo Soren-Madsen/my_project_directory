@@ -1,0 +1,22 @@
+person:
+    list: "Listado de Personas"
+    new_record: "Nuevo registro"
+    edit: "Editar"
+    delete: "Borrar"
+    delete_confirm: "¿Seguro que quieres borrar esta persona?"
+    accepts_commercial: "Acepta comunicaciones"
+    no_records: "No hay personas registradas."
+
+search:
+    placeholder: "Buscar por nombre"
+    button: "Buscar"
+
+menu:
+    login: "Ir a Login"
+
+general:
+    yes: "Sí"
+    no: "No"
+
+language:
+    change: "Cambiar idioma"

@@ -69,6 +69,7 @@ class HomeController extends AbstractController
         ]);
     }
 
+
     #[Route('/listado', name: 'person_list')]
     public function personList(Request $request, EntityManagerInterface $em): Response
     {
@@ -76,6 +77,7 @@ class HomeController extends AbstractController
         $page = max(1, (int)$request->query->get('page', 1));
         $limit = 5;
         $offset = ($page - 1) * $limit;
+
         $qb = $em->getRepository(Person::class)->createQueryBuilder('p');
         if ($search) {
             $qb->where('p.name LIKE :search')
@@ -99,6 +101,43 @@ class HomeController extends AbstractController
             'search' => $search,
             'page' => $page,
             'pages' => $pages,
+
+        ]);
+    }
+
+    #[Route('/{_locale}/listado', name: 'person_list_locale', requirements: ['_locale' => 'en|es'])]
+    public function personListLocale(Request $request, EntityManagerInterface $em, string $_locale): Response
+    {
+
+        $search = $request->query->get('search', '');
+        $page = max(1, (int)$request->query->get('page', 1));
+        $limit = 5;
+        $offset = ($page - 1) * $limit;
+
+        $qb = $em->getRepository(Person::class)->createQueryBuilder('p');
+        if ($search) {
+            $qb->where('p.name LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+        $qb->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        $people = $qb->getQuery()->getResult();
+
+        $count = $em->getRepository(Person::class)->createQueryBuilder('p');
+        if ($search) {
+            $count->where('p.name LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+        $total = (int)$count->select('COUNT(p.id)')->getQuery()->getSingleScalarResult();
+        $pages = (int)ceil($total / $limit);
+
+        return $this->render('person_list.html.twig', [
+            'people' => $people,
+            'search' => $search,
+            'page' => $page,
+            'pages' => $pages,
+            'locale' => $_locale,
         ]);
     }
 

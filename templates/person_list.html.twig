@@ -1,39 +1,38 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Listado de Personas{% endblock %}
+{% block title %}{{ 'person.list'|trans }}{% endblock %}
 
 {% block body %}
-    <h1>Listado de Personas</h1>
+    <h1>{{ 'person.list'|trans }}</h1>
 
     <div style="margin-bottom: 16px; display: flex; gap: 10px;">
         <a href="{{ path('person_form') }}">
-        <button type="button">Nuevo registro</button>
-     </a>
+            <button type="button">{{ 'person.new_record'|trans }}</button>
+        </a>
         <a href="{{ path('app_login') }}">
-        <button type="button">Ir a Login</button>
-     </a>
+            <button type="button">{{ 'menu.login'|trans }}</button>
+        </a>
     </div>
-    
 
-    <form method="get" action="{{ path('person_list') }}" style="margin-bottom: 16px;">
-        <input type="text" name="search" value="{{ search }}" placeholder="Buscar por nombre">
-        <button type="submit">Buscar</button>
+    <form method="get" action="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" style="margin-bottom: 16px;">
+        <input type="text" name="search" value="{{ search }}" placeholder="{{ 'search.placeholder'|trans }}">
+        <button type="submit">{{ 'search.button'|trans }}</button>
     </form>
     
     <ul>
         {% for person in people %}
             <li>
                 {{ person.name }} | {{ person.birthDate|date('Y-m-d') }} | {{ person.work }} | 
-                Acepta comunicaciones: {{ person.acceptsCommercial ? 'Sí' : 'No' }}
+                {{ 'person.accepts_commercial'|trans }}: {{ person.acceptsCommercial ? 'general.yes'|trans : 'general.no'|trans }}
                 <a href="{{ path('person_edit', {id: person.id}) }}">
-                    <button type="button">Editar</button>
+                    <button type="button">{{ 'person.edit'|trans }}</button>
                 </a>
                 <form action="{{ path('person_delete', {id: person.id}) }}" method="post" style="display:inline;">
-                    <button type="submit" onclick="return confirm('¿Seguro que quieres borrar esta persona?');">Borrar</button>
+                    <button type="submit" onclick="return confirm('{{ 'person.delete_confirm'|trans }}');">{{ 'person.delete'|trans }}</button>
                 </form>
             </li>
         {% else %}
-            <li>No hay personas registradas.</li>
+            <li>{{ 'person.no_records'|trans }}</li>
         {% endfor %}
     </ul>
 
@@ -43,9 +42,17 @@
                 {% if p == page %}
                     <span>[{{ p }}]</span>
                 {% else %}
-                    <a href="{{ path('person_list', {'page': p, 'search': search}) }}">{{ p }}</a>
+                    <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'page': p, 'search': search})) }}">{{ p }}</a>
                 {% endif %}
             {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if locale is defined %}
+        <div style="margin-top: 20px;">
+            <strong>{{ 'language.change'|trans }}:</strong>
+            <a href="{{ path('person_list_locale', {'_locale': 'en'}) }}">English</a> | 
+            <a href="{{ path('person_list_locale', {'_locale': 'es'}) }}">Español</a>
         </div>
     {% endif %}
 {% endblock %}
